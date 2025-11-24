@@ -1,12 +1,19 @@
 <script lang="ts">
   interface Props {
     actions: Array<{ label: string; onClick: () => void; variant?: 'primary' | 'secondary' }>;
+    alignment?: 'left' | 'center' | 'right';
   }
 
-  let { actions }: Props = $props();
+  let { actions, alignment = 'right' }: Props = $props();
+
+  const alignmentClasses = {
+    left: 'justify-start',
+    center: 'justify-center',
+    right: 'justify-end',
+  };
 </script>
 
-<div class="flex flex-wrap gap-3">
+<div class={`flex flex-wrap gap-3 ${alignmentClasses[alignment]}`}>
   {#each actions as action}
     <button
       onclick={action.onClick}

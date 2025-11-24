@@ -2,11 +2,33 @@
   import CommandPalette from '$lib/components/CommandPalette.svelte';
   import ToolWrapper from '$lib/components/ToolWrapper.svelte';
   import { tools } from '$lib/stores/toolRegistry';
-  import { appState } from '$lib/stores/appState.svelte';
+  import { appState, setActiveTool } from '$lib/stores/appState.svelte';
   import type { Tool } from '$lib/types/tool';
 
   const activeTool = $derived(tools.find((t: Tool) => t.id === appState.activeTool) || tools[0]);
+
+  // Handle global keyboard shortcuts for tools
+  function handleKeydown(e: KeyboardEvent) {
+    // Check for Cmd+Shift+B or Cmd+Shift+M
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey) {
+      const key = e.key.toLowerCase();
+
+      // Find tool with matching shortcut
+      const tool = tools.find(t => {
+        if (!t.shortcut) return false;
+        const shortcutKey = t.shortcut.split('+').pop()?.toLowerCase();
+        return shortcutKey === key;
+      });
+
+      if (tool) {
+        e.preventDefault();
+        setActiveTool(tool.id);
+      }
+    }
+  }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <main class="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
   <div class="fixed inset-0 -z-10 h-full w-full bg-slate-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
