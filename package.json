@@ -11,18 +11,23 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "format": "prettier --write .",
-    "lint": "eslint . --ext .ts,.svelte"
+    "lint": "eslint . --ext .ts,.svelte",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@tailwindcss/postcss": "^4.1.17",
+    "@tailwindcss/typography": "^0.5.19",
     "@tauri-apps/cli": "^2.9.4",
     "@tsconfig/svelte": "^5.0.6",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@typescript-eslint/parser": "^8.47.0",
+    "@vitest/ui": "^4.0.13",
     "autoprefixer": "^10.4.22",
     "eslint": "^9.39.1",
+    "jsdom": "^27.2.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
@@ -30,11 +35,14 @@
     "svelte-check": "^4.3.4",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitest": "^4.0.13"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.9.0",
     "cmdk-sv": "^0.0.19",
-    "lucide-svelte": "^0.554.0"
+    "highlight.js": "^11.11.1",
+    "lucide-svelte": "^0.554.0",
+    "marked": "^17.0.1"
   }
 }

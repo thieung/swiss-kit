@@ -12,7 +12,7 @@
   let { tool }: Props = $props();
 </script>
 
-<div class="max-w-5xl mx-auto">
+<div class="max-w-7xl mx-auto">
   <div class="mb-8">
     <h1 class="text-3xl font-bold tracking-tight text-slate-900">{tool.name}</h1>
     <p class="text-lg text-slate-600 mt-2">{tool.description}</p>
