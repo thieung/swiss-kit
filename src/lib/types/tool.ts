@@ -6,5 +6,5 @@ export interface Tool {
   description: string;
   component: Component;
   shortcut?: string;
-  icon?: string;
+  icon?: any;
 }
