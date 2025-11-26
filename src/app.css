@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import "highlight.js/styles/atom-one-dark.css";
+@import "prism-themes/themes/prism-one-dark.css";
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -30,7 +30,7 @@
   font-weight: 400;
 }
 
-.prose pre code.hljs {
+.prose pre code[class*="language-"] {
   background: transparent;
   padding: 0;
 }

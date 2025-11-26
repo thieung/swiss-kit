@@ -44,6 +44,7 @@
     "cmdk-sv": "^0.0.19",
     "lucide-svelte": "^0.554.0",
     "marked": "^17.0.1",
+    "prism-themes": "^1.9.0",
     "prismjs": "^1.30.0"
   }
 }
