@@ -17,12 +17,12 @@
   border-radius: 0.5rem !important;
   border-bottom-left-radius: 0.5rem !important;
   border-bottom-right-radius: 0.5rem !important;
-  font-size: 0.9375rem !important;
+  font-size: 0.875rem !important; /* Match text-sm = 14px */
 }
 
 .prose pre code {
   border-radius: 0 !important;
-  font-size: 0.9375rem !important;
+  font-size: 0.875rem !important; /* Match text-sm = 14px */
 }
 
 /* Better code block appearance */

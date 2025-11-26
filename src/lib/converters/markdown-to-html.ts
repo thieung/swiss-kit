@@ -6,6 +6,14 @@ import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-ruby';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-docker';
+import 'prismjs/components/prism-css';
 
 /**
  * Normalizes language aliases to supported Prism.js languages
@@ -23,6 +31,13 @@ function normalizeLanguage(lang: string): string | null {
     'md': 'markdown',
     'yml': 'yaml',
     'json5': 'json',
+    'rb': 'ruby',
+    'py': 'python',
+    'dockerfile': 'docker',
+    'css': 'css',
+    'sass': 'css',
+    'scss': 'css',
+    'less': 'css',
   };
 
   // Convert to lowercase for case-insensitive matching
