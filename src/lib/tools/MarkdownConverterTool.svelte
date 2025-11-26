@@ -6,11 +6,13 @@
   import { markdownToSlack } from '$lib/converters/markdown-to-slack';
   import { markdownToJira } from '$lib/converters/markdown-to-jira';
   import { markdownToHtml } from '$lib/converters/markdown-to-html';
+  import { Copy, Check } from 'lucide-svelte';
   import { copyToClipboard } from '$lib/utils/clipboard';
 
   let input = $state('');
   let selectedFormat = $state('Preview');
   let output = $state('');
+  let copied = $state(false);
 
   const converters = {
     'Preview': markdownToHtml,
@@ -41,6 +43,8 @@
   async function copyOutput() {
     if (output) {
       await copyToClipboard(output);
+      copied = true;
+      setTimeout(() => (copied = false), 2000);
     }
   }
 
@@ -49,24 +53,37 @@
     output = '';
   }
 
-  const actions = [
+  const actions = $derived([
     { label: 'Clear', onClick: clearAll, variant: 'secondary' as const },
-    { label: 'Copy Output', onClick: copyOutput, variant: 'primary' as const },
-  ];
+    {
+      label: copied ? 'Copied!' : 'Copy Output',
+      onClick: copyOutput,
+      variant: 'primary' as const,
+      icon: copied ? Check : Copy
+    },
+  ]);
 
 </script>
 
-<div class="space-y-4">
-  <FormatSelector
-    bind:selected={selectedFormat}
-    formats={Object.keys(converters)}
-    onSelect={handleFormatChange}
-  />
-
-  <div class="grid grid-cols-2 gap-4 h-[600px]">
-    <MarkdownInput bind:value={input} onInput={handleInput} />
-    <ConversionPreview {output} format={selectedFormat} />
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <FormatSelector
+      bind:selected={selectedFormat}
+      formats={Object.keys(converters)}
+      onSelect={handleFormatChange}
+    />
+    <div class="flex gap-2">
+      <ToolActions {actions} />
+    </div>
   </div>
 
-  <ToolActions {actions} />
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-12rem)] min-h-[500px]">
+    <div class="h-full flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/20 transition-shadow duration-200 hover:shadow-md">
+      <MarkdownInput bind:value={input} onInput={handleInput} />
+    </div>
+
+    <div class="h-full flex flex-col bg-slate-50/50 rounded-xl border border-slate-200 shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+      <ConversionPreview {output} format={selectedFormat} />
+    </div>
+  </div>
 </div>

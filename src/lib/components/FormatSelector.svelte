@@ -8,14 +8,14 @@
   let { selected = $bindable(), formats, onSelect }: Props = $props();
 </script>
 
-<div class="flex gap-2 border-b border-gray-200">
+<div class="flex p-1 bg-slate-100 rounded-lg border border-slate-200">
   {#each formats as format}
     <button
       onclick={() => onSelect(format)}
-      class={`px-4 py-2 font-medium transition-colors ${
+      class={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
         selected === format
-          ? 'border-b-2 border-blue-600 text-blue-600'
-          : 'text-gray-600 hover:text-gray-900'
+          ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5'
+          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
       }`}
     >
       {format}
