@@ -27,3 +27,6 @@ npm-debug.log*
 # AI Tools
 .claude/
 plans/
+
+# Others
+backup-*/
