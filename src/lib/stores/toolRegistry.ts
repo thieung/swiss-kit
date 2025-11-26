@@ -1,7 +1,16 @@
 import Base64Tool from '$lib/tools/Base64Tool.svelte';
 import MarkdownConverterTool from '$lib/tools/MarkdownConverterTool.svelte';
-import type { Tool } from '$lib/types/tool';
 import { Binary, FileText } from 'lucide-svelte';
+
+export interface Tool {
+  id: string;
+  name: string;
+  description: string;
+  component: any;
+  shortcut?: string;
+  icon: any;
+  category: 'converters' | 'encoders' | 'formatters' | 'generators' | 'utils';
+}
 
 export const tools: Tool[] = [
   {
@@ -11,6 +20,7 @@ export const tools: Tool[] = [
     component: Base64Tool,
     shortcut: 'Cmd+Shift+B',
     icon: Binary,
+    category: 'encoders',
   },
   {
     id: 'markdown-converter',
@@ -19,5 +29,6 @@ export const tools: Tool[] = [
     component: MarkdownConverterTool,
     shortcut: 'Cmd+Shift+M',
     icon: FileText,
+    category: 'converters',
   },
 ];

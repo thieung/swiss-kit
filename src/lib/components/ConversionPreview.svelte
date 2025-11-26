@@ -22,33 +22,39 @@
 </script>
 
 <div class="flex flex-col h-full relative group flex-1 min-h-0">
-  <div class="flex justify-between items-center mb-2">
-    <span class="text-sm font-medium text-gray-700">{format} Output</span>
-    <span class="text-xs text-gray-500">{charCount} characters</span>
+  <div class="flex justify-between items-center px-4 py-3 border-b border-slate-200 bg-slate-50/80">
+    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">{format} Output</span>
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono text-slate-400">{charCount} chars</span>
+      {#if output}
+        <button
+          onclick={handleCopy}
+          class="flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+          aria-label="Copy output"
+        >
+          {#if copied}
+            <Check size={14} />
+          {:else}
+            <Copy size={14} />
+          {/if}
+        </button>
+      {/if}
+    </div>
   </div>
-  <div bind:this={element} class="w-full h-full p-3 border border-gray-300 rounded-lg font-mono text-sm bg-gray-50 overflow-auto relative" role="region" aria-label={`${format} output preview`}>
+
+  <div bind:this={element} class="w-full h-full p-4 font-mono text-sm overflow-auto relative bg-transparent" role="region" aria-label={`${format} output preview`}>
     {#if format === 'Preview'}
-      <div class="prose prose-sm max-w-none">
-        {@html output || '<p class="text-gray-400">Preview will appear here...</p>'}
+      <div class="prose prose-sm max-w-none prose-slate prose-headings:font-semibold prose-a:text-indigo-600">
+        {@html output || '<p class="text-slate-400 italic">Preview will appear here...</p>'}
       </div>
     {:else}
-      <div class="whitespace-pre-wrap">
-        {output || 'Output will appear here...'}
+      <div class="whitespace-pre-wrap text-slate-700 leading-relaxed">
+        {#if output}
+          {output}
+        {:else}
+          <span class="text-slate-400 italic">Output will appear here...</span>
+        {/if}
       </div>
     {/if}
   </div>
-
-  {#if output}
-    <button
-      onclick={handleCopy}
-      class="absolute top-10 right-4 p-2 bg-white border border-gray-200 rounded-md shadow-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-      aria-label="Copy output"
-    >
-      {#if copied}
-        <Check size={16} class="text-green-600" />
-      {:else}
-        <Copy size={16} />
-      {/if}
-    </button>
-  {/if}
 </div>

@@ -1,10 +1,15 @@
 export const appState = $state({
-  activeTool: 'base64',
+  activeTool: 'base64' as string | null,
   commandPaletteOpen: false,
+  sidebarCollapsed: false,
 });
 
-export function setActiveTool(toolId: string) {
+export function setActiveTool(toolId: string | null) {
   appState.activeTool = toolId;
+}
+
+export function toggleSidebar() {
+  appState.sidebarCollapsed = !appState.sidebarCollapsed;
 }
 
 export function toggleCommandPalette() {
