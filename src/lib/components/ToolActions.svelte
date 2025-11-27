@@ -2,7 +2,7 @@
   import type { Component } from 'svelte';
 
   interface Props {
-    actions: Array<{ label: string; onClick: () => void; variant?: 'primary' | 'secondary'; icon?: Component }>;
+    actions: Array<{ label: string; onClick: () => void | Promise<void>; variant?: 'primary' | 'secondary'; icon?: Component<any> }>;
     alignment?: 'left' | 'center' | 'right';
   }
 

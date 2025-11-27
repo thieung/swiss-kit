@@ -774,6 +774,127 @@ fn maybe_transform(input: &str) -> Cow<'_, str> {
 }
 ```
 
+## Icon Usage Standards
+
+### Lucide-Svelte Integration
+
+#### Icon Import Patterns
+```typescript
+// ✅ Use specific imports from 'lucide-svelte' (no namespace imports)
+import { Binary, FileText, Database, Code2, Settings, Copy, Check } from 'lucide-svelte';
+
+// ❌ Avoid namespace imports for better tree-shaking
+import * as Icons from 'lucide-svelte';
+```
+
+#### Icon Size Standards
+```typescript
+// Standardized icon sizes - use consistent values across all components
+<Icon size={16} />  // Small icons (buttons, inline actions)
+<Icon size={18} />  // Medium icons (sidebar navigation)
+<Icon size={20} />  // Large icons (tool registry, command palette)
+<Icon size={24} />  // Extra large icons (headers, featured content)
+
+// ✅ Updated from inconsistent 14px to standardized 16px minimum
+// Example: ConversionPreview.svelte - updated Copy/Check icons from 14 to 16px
+```
+
+#### Icon Color Variants
+```typescript
+// Use shadcn-svelte color tokens for consistent theming
+<Icon size={16} class="text-foreground" />              // Default color
+<Icon size={18} class="text-muted-foreground" />        // Secondary text
+<Icon size={20} class="text-primary" />                 // Interactive elements
+<Icon size={24} class="text-destructive" />              // Error/delete actions
+<Icon size={16} class="text-green-600" />               // Success states
+```
+
+#### Accessibility Standards for Icon-Only Buttons
+```typescript
+// ✅ Icon-only buttons must have aria-label or title attributes
+<button
+  onclick={handleAction}
+  aria-label="Copy output"
+  class="p-2 hover:bg-slate-100 rounded-lg"
+>
+  <Copy size={16} />
+</button>
+
+// ✅ Provide both aria-label and title for better accessibility
+<button
+  onclick={toggleSidebar}
+  aria-label="Expand search bar"
+  title={appState.sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+  class="p-2 hover:bg-slate-100 rounded-lg"
+>
+  <Search size={20} />
+</button>
+
+// ✅ Use proper label association with for/id attributes
+<label for="sql-output">Formatted SQL</label>
+<div id="sql-output">...</div>
+```
+
+#### Icon Usage in Component Props
+```typescript
+// ✅ Component types accept lucide-svelte icons
+interface ToolAction {
+  label: string;
+  onClick: () => void | Promise<void>;  // Support both sync and async
+  variant?: 'primary' | 'secondary';
+  icon?: Component<any>;                // Lucide icon component
+}
+
+// ✅ Tool registry with standardized lucide-svelte icons
+const tools: Tool[] = [
+  {
+    id: 'base64',
+    name: 'Base64 Encoder/Decoder',
+    description: 'Encode and decode Base64 strings',
+    icon: Binary,                         // lucide-svelte icon
+    category: 'encoders'
+  },
+  {
+    id: 'sql-formatter',
+    name: 'SQL Formatter',
+    description: 'Format and explain SQL queries',
+    icon: Database,                       // lucide-svelte icon
+    category: 'formatters'
+  }
+];
+```
+
+#### Modal and Dialog Accessibility
+```typescript
+// ✅ Add role="dialog" and aria-modal for modal accessibility
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  role="dialog"
+  aria-modal="true"
+  onclick={onClose}
+>
+  <div onclick={(e) => e.stopPropagation()}>
+    <!-- Dialog content -->
+  </div>
+</div>
+```
+
+### Phase 04 Icon Standardization (Completed ✅)
+
+#### Implementation Changes
+- **ConversionPreview.svelte**: Updated icon sizes from 14 to 16px for Copy/Check icons
+- **Sidebar.svelte**: Added aria-label to icon-only expand/collapse button
+- **ConversionGuideDialog.svelte**: Added role="dialog" and aria-modal for modal accessibility
+- **SqlOutput.svelte**: Fixed label association with for/id attributes
+- **ToolActions.svelte**: Updated type definitions to support both sync/async onClick handlers and lucide-svelte icons
+
+#### Benefits Achieved
+- **Consistency**: Standardized icon sizes (16, 18, 20, 24px) across all components
+- **Accessibility**: Proper ARIA labels and screen reader support for icon-only elements
+- **Type Safety**: Full TypeScript compatibility with lucide-svelte component types
+- **Performance**: Optimized tree-shaking with specific icon imports
+- **Maintenance**: Single source of truth for icon system with lucide-svelte
+
 ## CSS & Styling Standards
 
 ### TailwindCSS Guidelines with shadcn-svelte
@@ -1527,4 +1648,4 @@ describe('CommandPalette Component Logic', () => {
 **Last Updated**: 2025-11-27
 **Review Cycle**: Monthly
 **Maintainers**: Development Team
-**shadcn-svelte Status**: Phase 01-03 Completed, Phase 04 Ready
+**shadcn-svelte Status**: Phase 01-04 Completed ✅

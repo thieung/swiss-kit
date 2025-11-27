@@ -29,7 +29,7 @@
 </script>
 
 {#if isOpen}
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onclick={onClose}>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" onclick={onClose}>
     <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col" onclick={(e) => e.stopPropagation()}>
       <!-- Header -->
       <div class="flex items-center justify-between p-6 border-b border-gray-200">

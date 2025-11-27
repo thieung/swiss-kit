@@ -33,9 +33,9 @@
           aria-label="Copy output"
         >
           {#if copied}
-            <Check size={14} />
+            <Check size={16} />
           {:else}
-            <Copy size={14} />
+            <Copy size={16} />
           {/if}
         </button>
       {/if}

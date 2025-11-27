@@ -25,7 +25,7 @@
 
 <div class="flex flex-col h-full relative group flex-1 min-h-0">
   <div class="flex justify-between items-center mb-2">
-    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Formatted SQL</label>
+    <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="sql-output">Formatted SQL</label>
     <span class="text-xs text-slate-500 dark:text-slate-400">{lineCount} lines, {charCount} chars</span>
   </div>
   {#if error}
@@ -36,7 +36,7 @@
   {:else}
     <div class="w-full h-full border border-slate-300 dark:border-slate-600 rounded-lg overflow-auto bg-slate-800 dark:bg-slate-50">
       {#if value}
-        <div class="h-full m-0 p-4 text-sm">
+        <div id="sql-output" class="h-full m-0 p-4 text-sm">
             <PrismHighlight code={value} language="sql" />
         </div>
       {:else}
