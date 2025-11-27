@@ -9,7 +9,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "$lib/*": ["src/lib/*"]
+      "$lib/*": ["src/lib/*"],
+      "$lib/components/ui": ["src/lib/components/ui"]
     },
     /**
      * Typecheck JS in `.svelte` and `.js` files by default.

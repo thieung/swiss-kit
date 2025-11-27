@@ -51,20 +51,33 @@ SwissKit is a hybrid desktop application combining a Rust backend with a Svelte 
 ```
 src/lib/
 ├── components/           # Reusable UI components
-│   ├── common/          # Generic components
+│   ├── ui/              # shadcn-svelte components (Phase 02)
+│   │   ├── button.svelte
+│   │   ├── input.svelte
+│   │   ├── card.svelte
+│   │   ├── dialog.svelte
+│   │   ├── alert.svelte
+│   │   ├── label.svelte
+│   │   └── ... (other shadcn-svelte components)
+│   ├── common/          # Generic components (existing)
 │   │   ├── Button.svelte
 │   │   ├── Input.svelte
 │   │   ├── Modal.svelte
-│   │   └── Loading.svelte
+│   │   ├── Loading.svelte
+│   │   ├── TextInput.svelte
+│   │   ├── Logo.svelte
+│   │   └── ToolWrapper.svelte
 │   ├── layout/          # Layout components
 │   │   ├── Header.svelte
 │   │   ├── Sidebar.svelte
 │   │   ├── Footer.svelte
-│   │   └── Main.svelte
+│   │   ├── Main.svelte
+│   │   └── Dashboard.svelte
 │   └── syntax/          # Syntax highlighting components
 │       ├── CodeBlock.svelte
 │       ├── SqlOutput.svelte
-│       └── MarkdownPreview.svelte
+│       ├── MarkdownPreview.svelte
+│       └── PrismHighlight.svelte
 ├── tools/               # Tool-specific components
 │   ├── Base64Tool.svelte
 │   ├── SqlFormatterTool.svelte
@@ -83,7 +96,9 @@ src/lib/
 │   ├── validation.ts
 │   ├── formatting.ts
 │   ├── file-handling.ts
-│   └── performance.ts
+│   ├── performance.ts
+│   ├── clipboard.ts
+│   └── utils.ts         # shadcn-svelte cn() utility
 └── types/               # TypeScript definitions
     ├── api.ts
     ├── tool.ts
@@ -158,12 +173,13 @@ export const eventBus = {
 
 ### Component Patterns
 
-#### Tool Component Template
+#### Tool Component Template (Current Implementation)
 ```typescript
-// tools/BaseToolTemplate.svelte
+// tools/BaseToolTemplate.svelte (Current - will be enhanced with shadcn-svelte in Phase 02)
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { createEventDispatcher } from 'svelte';
+  import { cn } from '$lib/utils'; // shadcn-svelte utility
 
   // Tool-specific configuration
   export let toolConfig: ToolConfig;
@@ -207,6 +223,7 @@ export const eventBus = {
   }
 </script>
 
+<!-- Current implementation -->
 <div class="tool-container" class:loading={isLoading}>
   <!-- Tool-specific header -->
   <slot name="header" />
@@ -244,6 +261,50 @@ export const eventBus = {
     <slot name="actions" {reset} {isLoading} />
   </div>
 </div>
+
+<!-- Phase 02: shadcn-svelte enhanced version -->
+<!--
+<Card class={cn("tool-container", isLoading && "opacity-75")}>
+  <CardHeader>
+    <slot name="header" />
+  </CardHeader>
+
+  <CardContent>
+    <!-- Loading state -->
+    {#if isLoading}
+      <div class="flex items-center space-x-2 text-muted-foreground">
+        <LoadingSpinner />
+        <span>Processing...</span>
+      </div>
+    {/if}
+
+    <!-- Error display with shadcn-svelte Alert -->
+    {#if error}
+      <Alert variant="destructive" class="mb-4">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    {/if}
+
+    <!-- Tool content -->
+    <div class="tool-content" class:has-result={result}>
+      <slot />
+    </div>
+
+    <!-- Result display -->
+    {#if result}
+      <div class="tool-result mt-4">
+        <slot name="result" {result} />
+      </div>
+    {/if}
+  </CardContent>
+
+  <CardFooter>
+    <div class="tool-actions flex space-x-2">
+      <slot name="actions" {reset} {isLoading} />
+    </div>
+  </CardFooter>
+</Card>
+-->
 ```
 
 ## Backend Architecture
@@ -879,36 +940,196 @@ class ErrorTracker {
 export const errorTracker = new ErrorTracker();
 ```
 
-## Future Architecture Considerations
+## shadcn-svelte Architecture Integration
 
-### Plugin System
+### Component System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Plugin Architecture                       │
+│                shadcn-svelte Integration                     │
+├─────────────────────────────────────────────────────────────┤
+│  Configuration Layer                                       │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  components.json│  │  Path Aliases   │  │  CSS Tokens  │ │
+│  │  - Schema       │  │  - $lib/ui      │  │  - Themes    │ │
+│  │  - Style Config │  │  - TypeScript   │  │  - Colors    │ │
+│  │  - Tailwind CSS │  │  - Autocomplete │  │  - Dark Mode │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│  Utility Layer                                             │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  cn() Function  │  │  Class Merging  │  │  Validation  │ │
+│  │  - clsx        │  │  - tailwind-merge│  │  - Props     │ │
+│  │  - tailwind-merge│ │  - Conditional  │  │  - Types     │ │
+│  │  - Performance  │  │  - Optimization  │  │  - Defaults   │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│  Component Library                                         │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  UI Components  │  │  Form Components│  │  Navigation  │ │
+│  │  - Button      │  │  - Input/Label  │  │  - Dialog    │ │
+│  │  - Card        │  │  - Select       │  │  - Sheet     │ │
+│  │  - Alert       │  │  - Checkbox     │  │  - Tabs      │ │
+│  │  - Badge       │  │  - Radio        │  │  - Dropdown  │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│  Migration Strategy                                         │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  Phase 01      │  │  Phase 02       │  │  Phase 03    │ │
+│  │  - Foundation  │  │  - Migration    │  │  - Enhanced  │ │
+│  │  - Config      │  │  - Components   │  │  - Custom UI │ │
+│  │  - Setup       │  │  - Integration  │  │  - Themes    │ │
+│  │  - Utilities   │  │  - Testing      │  │  - Plugins   │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Integration Patterns
+
+#### Phase 01 Foundation (Completed)
+```typescript
+// Configuration established
+components.json {
+  "style": "default",
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "src/app.css",
+    "baseColor": "slate"
+  },
+  "aliases": {
+    "components": "$lib/components",
+    "utils": "$lib/utils",
+    "ui": "$lib/components/ui"
+  }
+}
+
+// Utility function ready
+import { cn } from "$lib/utils";
+
+// CSS tokens integrated
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  // ... shadcn-svelte tokens
+}
+```
+
+#### Phase 02 Integration (Ready)
+```typescript
+// Component import strategy
+import { Button, Card, Alert } from "$lib/components/ui";
+import { cn } from "$lib/utils";
+
+// Enhanced tool components
+<Card class={cn("tool-container", isLoading && "opacity-75")}>
+  <CardContent>
+    {#if error}
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    {/if}
+
+    <div class="tool-content">
+      <slot />
+    </div>
+
+    <div class="tool-actions flex space-x-2 mt-4">
+      <Button
+        variant="default"
+        size="sm"
+        disabled={isLoading}
+        on:click={handleAction}
+      >
+        {actionText}
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+```
+
+### Component Migration Path
+
+```
+Current Implementation (Phase 01 Complete)
+┌─────────────────────────────────────────────────────────────┐
+│  Existing Components                                       │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  Button.svelte │  │  Input.svelte   │  │  Modal.svelte │ │
+│  │  - Custom CSS  │  │  - Validation   │  │  - Wrapper    │ │
+│  │  - Tailwind    │  │  - Styling      │  │  - Backdrop   │ │
+│  │  - Events      │  │  - Events       │  │  - Focus      │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼ Migration Strategy
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│  shadcn-svelte Components (Phase 02)                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │  button.svelte │  │  input.svelte   │  │  dialog.svelte│ │
+│  │  - Consistent   │  │  - Accessible   │  │  - Keyboard   │ │
+│  │  - Themable     │  │  - Forms Ready  │  │  - Focus Trap │ │
+│  │  - Accessible   │  │  - Validation   │  │  - Size Variants│ │
+│  │  - Variants     │  │  - Integration  │  │  - Animations │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Benefits of shadcn-svelte Integration
+
+#### Development Experience
+- **Consistency**: Unified component design language
+- **Accessibility**: WCAG compliant components built-in
+- **Theming**: Consistent color system with dark mode support
+- **Type Safety**: Full TypeScript support with proper typing
+- **Performance**: Optimized components with minimal bundle impact
+
+#### Maintenance Benefits
+- **Reduced CSS Debt**: Utility-first approach with consistent tokens
+- **Easier Updates**: Well-maintained component library
+- **Testing**: Built-in component patterns and test helpers
+- **Documentation**: Comprehensive API documentation
+- **Community**: Active development and community support
+
+#### User Experience
+- **Consistent UI**: Uniform design across all tools
+- **Better Accessibility**: Screen reader and keyboard navigation support
+- **Dark Mode**: Native dark theme support
+- **Performance**: Faster load times and smoother interactions
+- **Responsive**: Mobile-friendly responsive design
+
+## Future Architecture Considerations
+
+### Enhanced Plugin System with shadcn-svelte
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│            Enhanced Plugin Architecture                       │
 ├─────────────────────────────────────────────────────────────┤
 │  Plugin Manager                                             │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │  Plugin Loader  │  │  Plugin Registry│  │  Sandboxing  │ │
-│  │  - Dynamic Load │  │  - Metadata     │  │  - Isolation  │ │
-│  │  - Validation   │  │  - Permissions  │  │  - Resources  │ │
-│  │  - Lifecycle    │  │  - Dependencies │  │  - Limits     │ │
+│  │  Plugin Loader  │  │  Component Registry│  │  UI Themes   │ │
+│  │  - Dynamic Load │  │  - shadcn-svelte │  │  - Plugin UI │ │
+│  │  - Validation   │  │  - Custom Comps  │  │  - Styling   │ │
+│  │  - Lifecycle    │  │  - Integration   │  │  - Themes    │ │
 │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
-│  Plugin API                                                │
+│  Plugin API with shadcn-svelte                             │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │  UI Hooks       │  │  Data Hooks     │  │  Event Hooks │ │
-│  │  - Components   │  │  - Converters   │  │  - Listeners  │ │
-│  │  - Themes       │  │  - Validators   │  │  - Emitters  │ │
-│  │  - Actions      │  │  - Formatters   │  │  - Handlers  │ │
+│  │  UI Components  │  │  Data Hooks     │  │  Theme Hooks │ │
+│  │  - shadcn-svelte│  │  - Converters   │  │  - Color Schemes │ │
+│  │  - Custom UI    │  │  - Validators   │  │  - Branding  │ │
+│  │  - Layouts      │  │  - Formatters   │  │  - Consistency │ │
+│  │  - Actions      │  │  - Integration  │  │  - Integration │ │
 │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
-│  Core Application                                          │
+│  Core Application with Enhanced UI                           │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │  Built-in Tools │  │  Extension API  │  │  Plugin UI   │ │
-│  │  - Base64       │  │  - Registration │  │  - Injection │ │
-│  │  - SQL Formatter│  │  - Communication│  │  - Layouts   │ │
-│  │  - Markdown     │  │  - State Mgmt   │  │  - Controls  │ │
+│  │  Built-in Tools │  │  shadcn-svelte  │  │  Plugin UI   │ │
+│  │  - Base64       │  │  - Component Lib │  │  - Injection │ │
+│  │  - SQL Formatter│  │  - Theme System  │  │  - Layouts   │ │
+│  │  - Markdown     │  │  - Design Tokens │  │  - Controls  │ │
 │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -945,9 +1166,136 @@ export const errorTracker = new ErrorTracker();
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## Migration Status & Implementation Details
+
+### Phase 01: shadcn-svelte Foundation (Completed ✅)
+**Completion Date**: 2025-11-27
+**Status**: Successfully implemented and verified
+
+**Technical Implementation**:
+```typescript
+// Core configuration established
+components.json {
+  "$schema": "https://shadcn-svelte.com/schema.json",
+  "style": "default",
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "src/app.css",
+    "baseColor": "slate"
+  },
+  "aliases": {
+    "components": "$lib/components",
+    "utils": "$lib/utils",
+    "ui": "$lib/components/ui"
+  }
+}
+
+// Utility function implemented
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+// TypeScript path aliases configured
+"$lib/components/ui": ["src/lib/components/ui"]
+```
+
+**Integration Results**:
+- ✅ **Configuration**: components.json setup with default style and slate theme
+- ✅ **Utilities**: cn() function for conditional class merging
+- ✅ **Dependencies**: clsx, tailwind-merge, lucide-svelte, cmdk-sv integrated
+- ✅ **TypeScript**: Path aliases configured for component resolution
+- ✅ **Styling**: CSS custom properties integrated with TailwindCSS
+- ✅ **Build System**: Vite and TypeScript compilation verified
+- ✅ **Theme System**: Light/dark mode color tokens established
+
+**Performance Impact**:
+- Bundle size: Minimal increase (clsx + tailwind-merge < 10KB)
+- Runtime performance: No impact, optimized class merging
+- Development experience: Improved with type aliases and utility functions
+
+### Phase 02: Component Migration (Ready 🚀)
+**Status**: Foundation complete, ready for component migration
+**Implementation Strategy**: Gradual migration with feature parity
+
+**Migration Priority**:
+1. **High-Priority**: Button, Input, Card, Alert components
+2. **Medium-Priority**: Dialog, Select, Checkbox, Radio components
+3. **Low-Priority**: Advanced components (Charts, Tables, etc.)
+
+**Implementation Approach**:
+```typescript
+// Before: Custom component
+<div class="tool-container">
+  <button
+    class="px-4 py-2 bg-blue-600 text-white rounded-md"
+    on:click={handleAction}
+  >
+    {actionText}
+  </button>
+</div>
+
+// After: shadcn-svelte component
+<Card class="tool-container">
+  <Button
+    variant="default"
+    size="sm"
+    on:click={handleAction}
+  >
+    {actionText}
+  </Button>
+</Card>
+```
+
+### Benefits Realized
+
+#### Phase 01 Benefits
+- **Foundation Ready**: Complete setup for component migration
+- **Type Safety**: Improved TypeScript support with path aliases
+- **Consistency**: Unified theming system established
+- **Performance**: Optimized utilities with minimal bundle impact
+
+#### Anticipated Phase 02 Benefits
+- **Development Velocity**: Faster development with pre-built components
+- **Consistency**: Unified design system across all tools
+- **Accessibility**: WCAG compliant components out-of-the-box
+- **Maintenance**: Reduced CSS debt and easier updates
+
+### Integration Architecture Summary
+
+```
+shadcn-svelte Integration Status
+┌─────────────────────────────────────────────────────────────┐
+│ Phase 01: Foundation ✅ (Completed)                        │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌──────────────┐ │
+│ │ Configuration    │ │ Utilities       │ │ Build System  │ │
+│ │ - components.json│ │ - cn() function │ │ - TypeScript  │ │
+│ │ - Path aliases   │ │ - clsx         │ │ - Vite        │ │
+│ │ - Theme setup    │ │ - tailwind-merge│ │ - TailwindCSS │ │
+│ └─────────────────┘ └─────────────────┘ └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│ Phase 02: Components 🚀 (Ready)                           │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌──────────────┐ │
+│ │ UI Components    │ │ Form Components  │ │ Navigation    │ │
+│ │ - Button        │ │ - Input/Label   │ │ - Dialog      │ │
+│ │ - Card          │ │ - Select        │ │ - Sheet       │ │
+│ │ - Alert         │ │ - Checkbox      │ │ - Tabs        │ │
+│ │ - Badge         │ │ - Radio         │ │ - Dropdown    │ │
+│ └─────────────────┘ └─────────────────┘ └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│ Phase 03: Enhancements 🔮 (Future)                         │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌──────────────┐ │
+│ │ Custom Themes   │ │ Plugin System   │ │ Enhanced UI   │ │
+│ │ - Brand colors  │ │ - Component Reg │ │ - Animations  │ │
+│ │ - Custom styles │ │ - Theme Hooks   │ │ - Micro-interactions │ │
+│ │ - Responsive    │ │ - Plugin UI     │ │ - Advanced Patterns │ │
+│ └─────────────────┘ └─────────────────┘ └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2025-11-26
+**Document Version**: 1.1
+**Last Updated**: 2025-11-27
 **Architecture Review**: Quarterly
 **Maintainers**: Development Team
+**shadcn-svelte Status**: Phase 01 Completed ✅, Phase 02 Ready 🚀
