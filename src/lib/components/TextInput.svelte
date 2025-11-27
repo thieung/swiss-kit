@@ -36,7 +36,7 @@
     <Input
       id="text-input"
       {placeholder}
-      {type}
+      type={type || 'text'}
       bind:value={value}
       oninput={handleInput}
       class="h-full font-mono resize-none"

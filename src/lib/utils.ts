@@ -12,7 +12,11 @@ export type WithElementRef<T extends HTMLElement = HTMLElement> = T & {
 	element?: T;
 }
 
-export type WithoutChildrenOrChild = {
+export type WithoutChildren<T = {}> = T & {
+	children?: never;
+}
+
+export type WithoutChildrenOrChild<T = {}> = T & {
 	children?: never;
 	child?: never;
 }
