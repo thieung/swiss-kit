@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { Input } from '$lib/components/ui/input';
+  import type { HTMLInputAttributes } from 'svelte/elements';
+
   interface Props {
     value: string;
     label?: string;
     placeholder?: string;
     onInput?: (value: string) => void;
-    element?: HTMLTextAreaElement;
+    type?: HTMLInputAttributes['type'];
   }
 
   let {
@@ -12,13 +15,13 @@
     label = 'Input',
     placeholder = 'Enter text...',
     onInput,
-    element = $bindable()
+    type = 'text'
   }: Props = $props();
 
   const charCount = $derived(value.length);
 
   function handleInput(e: Event) {
-    const target = e.target as HTMLTextAreaElement;
+    const target = e.target as HTMLInputElement;
     value = target.value;
     onInput?.(value);
   }
@@ -29,12 +32,14 @@
     <label for="text-input" class="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</label>
     <span class="text-xs font-mono text-slate-400">{charCount} chars</span>
   </div>
-  <textarea
-    bind:this={element}
-    id="text-input"
-    {value}
-    {placeholder}
-    oninput={handleInput}
-    class="w-full h-full p-4 font-mono text-sm text-slate-700 resize-none focus:outline-none bg-transparent leading-relaxed"
-  ></textarea>
+  <div class="flex-1 min-h-0">
+    <Input
+      id="text-input"
+      {placeholder}
+      {type}
+      bind:value={value}
+      oninput={handleInput}
+      class="h-full font-mono resize-none"
+    />
+  </div>
 </div>

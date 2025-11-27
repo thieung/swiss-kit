@@ -1,5 +1,6 @@
 <script lang="ts">
   import { X } from 'lucide-svelte';
+  import * as Dialog from '$lib/components/ui/dialog';
 
   interface Props {
     isOpen: boolean;
@@ -28,30 +29,23 @@
   ];
 </script>
 
-{#if isOpen}
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" onclick={onClose}>
-    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col" onclick={(e) => e.stopPropagation()}>
-      <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-gray-200">
-        <h2 class="text-2xl font-bold text-gray-900">Markdown to Slack mrkdwn Conversion Guide</h2>
-        <button
-          onclick={onClose}
-          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Close"
-        >
-          <X size={24} />
-        </button>
-      </div>
+<Dialog.Root bind:open={isOpen}>
+  <Dialog.Content class="max-w-4xl max-h-[90vh] flex flex-col">
+    <Dialog.Header>
+      <Dialog.Title>Markdown to Slack mrkdwn Conversion Guide</Dialog.Title>
+      <Dialog.Close onclick={onClose}>
+        <X size={24} />
+      </Dialog.Close>
+    </Dialog.Header>
 
-      <!-- Content -->
-      <div class="overflow-y-auto p-6">
-        <p class="text-gray-600 mb-6">
-          This tool converts standard Markdown syntax to Slack mrkdwn format. Below are the supported conversions:
-        </p>
+    <Dialog.Body class="overflow-y-auto p-6">
+      <Dialog.Description class="text-gray-600 mb-6">
+        This tool converts standard Markdown syntax to Slack mrkdwn format. Below are the supported conversions:
+      </Dialog.Description>
 
-        <div class="space-y-4">
-          {#each conversions as conversion}
-            <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+      <div class="space-y-4">
+        {#each conversions as conversion}
+          <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <div class="text-xs font-semibold text-gray-500 uppercase mb-1">Markdown</div>
@@ -80,17 +74,15 @@
             <li>Based on <a href="https://github.com/fla9ua/markdown_to_mrkdwn" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-600">fla9ua/markdown_to_mrkdwn</a></li>
           </ul>
         </div>
-      </div>
+    </Dialog.Body>
 
-      <!-- Footer -->
-      <div class="border-t border-gray-200 p-6">
-        <button
+    <Dialog.Footer class="border-t border-gray-200 p-6">
+      <button
           onclick={onClose}
           class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
           Got it!
         </button>
-      </div>
-    </div>
-  </div>
-{/if}
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>

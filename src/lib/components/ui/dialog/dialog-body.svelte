@@ -5,7 +5,7 @@
 	let {
 		ref = $bindable(null),
 		class: className,
-		"data-slot": dataSlot = "dialog-footer",
+		"data-slot": dataSlot = "dialog-body",
 		...restProps
 	}: WithoutChildrenOrChild<WithElementRef<HTMLDivElement>> = $props();
 </script>
@@ -14,8 +14,15 @@
 	bind:this={ref}
 	data-slot={dataSlot}
 	class={cn(
-		"flex items-center border-t bg-background px-6 py-4",
+		"flex-1 flex-1 py-0 text-left text-sm leading-relaxed",
 		className
 	)}
 	{...restProps}
 ></div>
+
+<style>
+	:global([data-slot="dialog-body"]) {
+		max-height: calc(100vh - 8rem);
+		overflow-y: auto;
+	}
+</style>
