@@ -1,0 +1,22 @@
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export type { ClassValue } from "clsx"
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs))
+}
+
+// shadcn-svelte type utilities
+export type WithElementRef<T extends HTMLElement = HTMLElement> = T & {
+	element?: T;
+}
+
+export type WithoutChildren<T = {}> = T & {
+	children?: never;
+}
+
+export type WithoutChildrenOrChild<T = {}> = T & {
+	children?: never;
+	child?: never;
+}

@@ -50,6 +50,7 @@
       <button
         class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"
         onclick={() => appState.sidebarCollapsed = false}
+        aria-label="Expand search bar"
       >
         <Search size={20} />
       </button>
