@@ -1,5 +1,7 @@
 <script lang="ts">
   import * as Command from '$lib/components/ui/command';
+  import { Command as CommandPrimitive } from "bits-ui";
+  import SearchIcon from "@lucide/svelte/icons/search";
   import { tools } from '$lib/stores/toolRegistry';
   import { appState, setActiveTool, toggleCommandPalette } from '$lib/stores/appState.svelte';
 
@@ -50,13 +52,14 @@
     onclick={() => toggleCommandPalette()}
   >
     <div
-      class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 ring-1 ring-black/5 transform transition-all"
+      class="bg-popover rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-border ring-1 ring-black/5 transform transition-all"
       onclick={(e) => e.stopPropagation()}
     >
       <Command.Root shouldFilter={false}>
-        <div class="flex items-center border-b border-slate-100 px-4">
-          <Command.Input autofocus bind:value={searchQuery} placeholder="Search tools..." class="w-full py-4 text-lg text-slate-800 placeholder:text-slate-400 outline-none bg-transparent" />
-          <div class="text-xs text-slate-400 font-medium px-2 py-1 rounded bg-slate-100 border border-slate-200">ESC</div>
+        <div class="flex items-center border-b border-border px-4">
+          <SearchIcon class="mr-2 size-5 text-muted-foreground" />
+          <CommandPrimitive.Input id="command-palette-search" name="command-palette-search" autofocus bind:value={searchQuery} placeholder="Search tools..." class="flex-1 py-4 text-lg text-foreground placeholder:text-muted-foreground outline-none bg-transparent" />
+          <div class="text-xs text-muted-foreground font-medium px-2 py-1 rounded bg-muted border border-border ml-2">ESC</div>
         </div>
         <Command.List class="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
           <Command.Empty class="py-12 text-center text-slate-500">

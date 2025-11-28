@@ -69,21 +69,25 @@ swisskit/
 
 ## Technology Stack
 
-- **Frontend**: Svelte 5 with TypeScript
+- **Frontend**: Svelte 5 with TypeScript and runes ($state, $derived, $effect)
 - **Backend**: Rust with Tauri 2.x
-- **Styling**: Tailwind CSS v4 (CSS-first with Vite plugin)
-- **Fonts**: Self-hosted Geist Variable & Geist Mono Variable
-- **Colors**: OKLCH color space
-- **Build Tool**: Vite
-- **Code Quality**: ESLint, Prettier, TypeScript
+- **Styling**: Tailwind CSS v4.1.17 (CSS-first with Vite plugin)
+- **Fonts**: Self-hosted Geist Variable & Geist Mono Variable (offline-compatible)
+- **Colors**: OKLCH color space for perceptual uniformity
+- **Build Tool**: Vite with optimized bundling
+- **Code Quality**: ESLint, Prettier, TypeScript strict mode
+- **UI Components**: shadcn-svelte ecosystem with 25+ components
 
 ## Features
 
-- **Modern UI**: Tailwind CSS v4 with CSS-first configuration
-- **Theme Switching**: Dark/Light/System mode with persistent preferences
-- **Self-hosted Fonts**: Geist Variable font family for optimal performance
-- **OKLCH Colors**: Perceptually uniform color system
-- **FOUC Prevention**: Blocking script for flicker-free theme initialization
+- **Modern UI**: Tailwind CSS v4 with CSS-first @theme directive configuration
+- **Theme Switching**: Dark/Light/System mode with localStorage persistence and system preference detection
+- **Self-hosted Fonts**: Geist Variable font family for optimal performance and offline compatibility
+- **OKLCH Colors**: Perceptually uniform color system with automatic dark/light mode variants
+- **FOUC Prevention**: Blocking script in index.html for flicker-free theme initialization
+- **Reactive State**: Svelte 5 runes for modern reactive state management
+- **Command Palette**: Keyboard-driven navigation with cmdk-sv integration
+- **Component System**: Full shadcn-svelte ecosystem with accessibility features
 
 ## Window Configuration
 

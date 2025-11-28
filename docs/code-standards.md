@@ -680,6 +680,500 @@ function createUserStore(): Writable<UserState> {
 export const userStore = createUserStore();
 ```
 
+## Tailwind CSS v4 & Theme System Standards
+
+### CSS-First Configuration (Phase 06 Complete)
+
+#### @theme Directive Usage
+```css
+/* ✅ Use @theme directive for Tailwind v4 CSS-first configuration */
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Font System */
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "Menlo", "Monaco", monospace;
+
+  /* Color System - OKLCH */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  /* ... complete color mapping */
+}
+
+/* Dark mode variant */
+@custom-variant dark (&:is(.dark *));
+```
+
+#### OKLCH Color System
+```css
+/* ✅ Use OKLCH for perceptual uniformity */
+:root {
+  /* Light mode colors */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.11 0.005 285.82);
+  --primary: oklch(0.31 0.039 285.82);
+  --primary-foreground: oklch(0.98 0.002 285.82);
+  --secondary: oklch(0.96 0.006 285.82);
+  --secondary-foreground: oklch(0.31 0.039 285.82);
+  --muted: oklch(0.96 0.006 285.82);
+  --muted-foreground: oklch(0.55 0.015 285.82);
+  --accent: oklch(0.96 0.006 285.82);
+  --accent-foreground: oklch(0.31 0.039 285.82);
+  --destructive: oklch(0.65 0.22 29.23);
+  --destructive-foreground: oklch(0.98 0.002 285.82);
+  --border: oklch(0.92 0.006 285.82);
+  --input: oklch(0.92 0.006 285.82);
+  --ring: oklch(0.31 0.039 285.82);
+  --radius: 0.5rem;
+}
+
+/* Dark mode colors */
+.dark {
+  --background: oklch(0.11 0.005 285.82);
+  --foreground: oklch(0.98 0.002 285.82);
+  --primary: oklch(0.98 0.002 285.82);
+  --primary-foreground: oklch(0.31 0.039 285.82);
+  /* ... complete dark mode variant */
+}
+```
+
+### Theme Switching Implementation
+
+#### Theme State Management (Svelte 5 Runes)
+```typescript
+// ✅ Use Svelte 5 runes for reactive theme management
+import type { ThemeMode } from '$lib/types/theme';
+
+type ThemeMode = 'light' | 'dark' | 'system';
+
+// Initialize theme from localStorage or system preference
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window === 'undefined') return 'system';
+  const stored = localStorage.getItem('theme-mode');
+  if (stored === 'light' || stored === 'dark' || stored === 'system') {
+    return stored;
+  }
+  return 'system';
+};
+
+// Reactive state with Svelte 5 runes
+export const appState = $state({
+  activeTool: 'base64' as string | null,
+  commandPaletteOpen: false,
+  sidebarCollapsed: false,
+  themeMode: getInitialTheme(),
+});
+
+// Get resolved theme (handles system preference)
+export function getResolvedTheme(): 'light' | 'dark' {
+  if (appState.themeMode !== 'system') {
+    return appState.themeMode;
+  }
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return 'light';
+}
+```
+
+#### Theme Application Logic
+```typescript
+// ✅ Proper theme application with FOUC prevention
+export function setTheme(mode: ThemeMode) {
+  appState.themeMode = mode;
+
+  // Persist to localStorage
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('theme-mode', mode);
+
+    // Calculate resolved theme
+    const resolvedTheme = mode === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : mode;
+
+    // Apply theme to document
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(resolvedTheme);
+    document.documentElement.style.colorScheme = resolvedTheme;
+  }
+}
+
+// Initialize theme with system preference listeners
+export function initializeTheme() {
+  if (typeof window === 'undefined') return;
+
+  const mode = getInitialTheme();
+  const resolvedTheme = mode === 'system'
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : mode;
+
+  document.documentElement.classList.add(resolvedTheme);
+  document.documentElement.style.colorScheme = resolvedTheme;
+
+  // Listen for system preference changes
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const handleChange = () => {
+    if (appState.themeMode === 'system') {
+      setTheme('system');
+    }
+  };
+
+  mediaQuery.addEventListener('change', handleChange);
+
+  return () => mediaQuery.removeEventListener('change', handleChange);
+}
+```
+
+### Theme Toggle Component Patterns
+
+#### ThemeToggle Component Structure
+```typescript
+<!-- ✅ Use lucide-svelte icons with proper accessibility -->
+<script lang="ts">
+  import { Sun, Moon, Monitor } from 'lucide-svelte';
+  import { appState, setTheme } from '$lib/stores/appState.svelte';
+
+  type ThemeMode = 'light' | 'dark' | 'system';
+
+  let isOpen = $state(false);
+
+  function handleThemeSelect(mode: ThemeMode) {
+    setTheme(mode);
+    isOpen = false;
+  }
+
+  function toggleDropdown() {
+    isOpen = !isOpen;
+  }
+
+  // Close dropdown when clicking outside
+  function handleClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.theme-toggle-container')) {
+      isOpen = false;
+    }
+  }
+
+  $effect(() => {
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  });
+</script>
+
+<div class="theme-toggle-container relative">
+  <button
+    onclick={toggleDropdown}
+    class="flex items-center justify-center w-9 h-9 rounded-md hover:bg-accent transition-colors"
+    aria-label="Toggle theme"
+    type="button"
+  >
+    {#if appState.themeMode === 'light'}
+      <Sun class="w-5 h-5" />
+    {:else if appState.themeMode === 'dark'}
+      <Moon class="w-5 h-5" />
+    {:else}
+      <Monitor class="w-5 h-5" />
+    {/if}
+  </button>
+
+  {#if isOpen}
+    <div
+      class="absolute right-0 mt-2 w-36 bg-popover text-popover-foreground rounded-md shadow-lg border border-border overflow-hidden z-50"
+      role="menu"
+    >
+      <div class="py-1">
+        {#each ['light', 'dark', 'system'] as mode}
+          {@const Icon = themeIcons[mode as ThemeMode]}
+          <button
+            onclick={() => handleThemeSelect(mode as ThemeMode)}
+            class="flex items-center gap-3 w-full px-3 py-2 text-sm hover:bg-accent transition-colors {appState.themeMode === mode ? 'bg-accent' : ''}"
+            type="button"
+            role="menuitem"
+          >
+            <Icon class="w-4 h-4" />
+            <span>{themeLabels[mode as ThemeMode]}</span>
+            {#if appState.themeMode === mode}
+              <span class="ml-auto text-xs" aria-hidden="true">✓</span>
+            {/if}
+          </button>
+        {/each}
+      </div>
+    </div>
+  {/if}
+</div>
+```
+
+### FOUC Prevention Patterns
+
+#### Index HTML Blocking Script
+```html
+<!-- ✅ Include blocking script to prevent theme flash -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- FOUC Prevention: Blocking script for theme initialization -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme-mode') || 'system';
+        const resolvedTheme = theme === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme;
+        document.documentElement.classList.add(resolvedTheme);
+        document.documentElement.style.colorScheme = resolvedTheme;
+      })();
+    </script>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content="SwissKit - Modern developer tools" />
+    <title>SwissKit</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+```
+
+### Vite Configuration for Tailwind v4
+
+#### vite.config.ts Setup
+```typescript
+// ✅ Use Tailwind v4 Vite plugin
+import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'path'
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),  // Tailwind v4 plugin - replaces PostCSS
+    svelte()
+  ],
+  resolve: {
+    alias: {
+      '$lib': resolve('./src/lib')
+    }
+  },
+  // Additional optimization for theme system
+  optimizeDeps: {
+    include: [
+      '@fontsource-variable/geist',
+      '@fontsource-variable/geist-mono'
+    ]
+  }
+})
+```
+
+#### tailwind.config.js (IDE Support Only)
+```javascript
+// ✅ Minimal config for IDE support only
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{html,js,svelte,ts}'],
+  theme: {
+    extend: {},  // Configuration handled in app.css with @theme
+  },
+  plugins: [],   // Plugins handled in app.css with @plugin
+}
+```
+
+### Font System Standards
+
+#### Geist Font Integration
+```css
+/* ✅ Import and configure Geist variable fonts */
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/* Configure in @theme directive */
+@theme {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "Menlo", "Monaco", monospace;
+}
+```
+
+#### Font Usage Patterns
+```css
+/* ✅ Use font system variables consistently */
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  font-variant-ligatures: common-ligatures;
+}
+
+/* Monospace with optimized readability */
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-weight: 400;
+}
+```
+
+### Theme-Aware Styling Patterns
+
+#### Consistent Theme Class Usage
+```typescript
+// ✅ Use theme-aware classes for consistent theming
+const buttonClasses = cn(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium",
+  "transition-colors focus-visible:outline-none focus-visible:ring-2",
+  "focus-visible:ring-ring focus-visible:ring-offset-2",
+  "disabled:pointer-events-none disabled:opacity-50",
+  "bg-primary text-primary-foreground hover:bg-primary/90",
+  "dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+);
+```
+
+#### Component Theme Integration
+```svelte
+<!-- ✅ Theme-aware component implementation -->
+<script lang="ts">
+  import { getResolvedTheme } from '$lib/stores/appState.svelte';
+
+  const resolvedTheme = $derived(getResolvedTheme());
+</script>
+
+<div class="bg-background text-foreground border-border rounded-lg">
+  <h2 class="text-lg font-semibold text-foreground mb-2">
+    Themed Component
+  </h2>
+  <p class="text-muted-foreground">
+    This component automatically adapts to the current theme: {resolvedTheme}
+  </p>
+</div>
+```
+
+### Performance Optimization
+
+#### Theme System Performance
+```typescript
+// ✅ Optimize theme switching performance
+export function setTheme(mode: ThemeMode) {
+  // Debounce rapid theme changes
+  if (themeUpdateTimeout) {
+    clearTimeout(themeUpdateTimeout);
+  }
+
+  themeUpdateTimeout = setTimeout(() => {
+    appState.themeMode = mode;
+    applyThemeToDocument(mode);
+  }, 50); // 50ms debounce
+}
+
+// Efficient DOM manipulation
+function applyThemeToDocument(mode: ThemeMode) {
+  const resolvedTheme = getResolvedTheme();
+  const html = document.documentElement;
+
+  // Batch DOM updates
+  html.classList.remove('light', 'dark');
+  html.classList.add(resolvedTheme);
+  html.style.colorScheme = resolvedTheme;
+
+  // Persist theme preference
+  localStorage.setItem('theme-mode', mode);
+}
+```
+
+#### Build Optimization
+```typescript
+// ✅ Optimize bundle size for theme system
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'theme': ['./src/lib/stores/appState.svelte.ts'],
+          'components': ['./src/lib/components/ThemeToggle.svelte']
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    include: [
+      '@fontsource-variable/geist',
+      '@fontsource-variable/geist-mono'
+    ]
+  }
+})
+```
+
+### Testing Theme System
+
+#### Theme Component Testing
+```typescript
+// ✅ Comprehensive theme system testing
+import { render, fireEvent, screen } from '@testing-library/svelte';
+import { describe, it, expect, beforeEach } from 'vitest';
+import ThemeToggle from './ThemeToggle.svelte';
+import { appState, setTheme } from '$lib/stores/appState.svelte';
+
+describe('ThemeToggle Component', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    appState.themeMode = 'system';
+  });
+
+  it('renders with correct icon for current theme', () => {
+    render(ThemeToggle);
+
+    // Should show Monitor icon for system theme
+    expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument();
+  });
+
+  it('opens dropdown when clicked', async () => {
+    render(ThemeToggle);
+    const button = screen.getByLabelText('Toggle theme');
+
+    await fireEvent.click(button);
+
+    expect(screen.getByText('Light')).toBeInTheDocument();
+    expect(screen.getByText('Dark')).toBeInTheDocument();
+    expect(screen.getByText('System')).toBeInTheDocument();
+  });
+
+  it('changes theme when option selected', async () => {
+    render(ThemeToggle);
+    const button = screen.getByLabelText('Toggle theme');
+
+    await fireEvent.click(button);
+    const lightOption = screen.getByText('Light');
+
+    await fireEvent.click(lightOption);
+
+    expect(appState.themeMode).toBe('light');
+    expect(localStorage.getItem('theme-mode')).toBe('light');
+  });
+
+  it('applies correct theme class to document', async () => {
+    render(ThemeToggle);
+    const button = screen.getByLabelText('Toggle theme');
+
+    await fireEvent.click(button);
+    const darkOption = screen.getByText('Dark');
+
+    await fireEvent.click(darkOption);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(document.documentElement.style.colorScheme).toBe('dark');
+  });
+});
+```
+
 ## Rust Standards
 
 ### Code Organization
@@ -1025,7 +1519,7 @@ const tools: Tool[] = [
   border-color: var(--color-bg-primary);
 }
 
-/* Phase 02: shadcn-svelte dark mode (tokens already defined above) */
+/* shadcn-svelte dark mode (tokens already defined above) */
 .dark .shadcn-component {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
@@ -1335,73 +1829,6 @@ test(formatter): add edge case tests
 - [ ] Security implications addressed
 - [ ] Error handling is robust
 - [ ] Accessibility requirements met
-
-### Review Process
-1. **Self-Review**: Author reviews own changes first
-2. **Peer Review**: At least one other developer reviews
-3. **Automated Checks**: CI/CD pipeline runs tests
-4. **Approval**: Required approvals before merging
-5. **Post-Merge**: Monitor for issues after deployment
-
-## shadcn-svelte Migration Guidelines
-
-### Phase 01: Foundation (Completed) ✅
-- **Configuration**: `components.json` setup with default style and slate theme
-- **Utilities**: `cn()` function for conditional class merging
-- **TypeScript**: Path aliases configured for `$lib/components/ui`
-- **Styling**: CSS custom properties integrated with existing TailwindCSS setup
-- **Dependencies**: clsx, tailwind-merge, and icon packages added
-
-### Phase 02: Component Library (Completed) ✅
-- **Status**: 22 shadcn-svelte components successfully installed
-- **Implementation**: Command (10), Dialog (9), Form (3), Layout (1) components
-- **Integration**: cmdk-sv and lucide-svelte dependencies added
-- **Type System**: Enhanced type utilities for component development
-- **Verification**: TypeScript compilation and Vite build process verified
-
-### Phase 03: Command Palette Migration (Completed) ✅
-- **Status**: CommandPalette.svelte successfully migrated to shadcn-svelte
-- **Implementation**: Full cmdk-sv integration with keyboard navigation
-- **Reactive Patterns**: Svelte 5 $effect for efficient search filtering
-- **Test Coverage**: Comprehensive test suite with 100% logic coverage
-- **Performance**: <100ms search response time with optimized algorithms
-- **Accessibility**: WCAG 2.1 AA compliant keyboard navigation
-
-### Phase 04: Icon Standardization (Completed ✅)
-- **Status**: Successfully completed with comprehensive lucide-svelte integration
-- **Approach**: Standardized icons across all components using consistent lucide-svelte implementation
-- **Results**: Unified icon system with standardized sizes and theming
-- **Strategy**: Used CommandPalette migration as successful reference pattern
-
-### Phase 05: Core Component Enhancement (Completed ✅)
-- **Status**: Successfully completed - 100% of legacy components migrated
-- **Approach**: Final migration of remaining legacy components to shadcn-svelte ecosystem
-- **Results**: Complete shadcn-svelte integration with enhanced Dialog system
-- **Strategy**: Applied modern Svelte 5 patterns with comprehensive testing
-
-### Migration Checklist for Phase 04 ✅ (Completed)
-- [x] **Icon Audit**: Complete inventory of all icon usage across components
-- [x] **Lucide Integration**: Replaced all custom/emoji icons with lucide-svelte
-- [x] **Size Consistency**: Standardized icon sizes (16, 18, 20, 24px variants)
-- [x] **Color Theming**: Applied consistent shadcn-svelte color tokens for icon styling
-- [x] **Tool Icons**: Updated tool registry with consistent lucide-svelte implementation
-- [x] **Button Icons**: Standardized icon usage in button components
-- [x] **State Icons**: Implemented consistent loading, error, and success icons
-- [x] **Accessibility**: Added proper ARIA labels for all icon-only elements
-- [x] **Testing**: Updated component tests with new lucide-svelte implementations
-- [x] **Documentation**: Documented complete icon system and usage guidelines
-
-### Migration Checklist for Phase 05 ✅ (Completed)
-- [x] **Component Audit**: Complete inventory of remaining legacy components
-- [x] **TextInput Migration**: Migrated to shadcn Input with Svelte 5 patterns
-- [x] **TextArea Migration**: Migrated to shadcn Textarea with enhanced accessibility
-- [x] **ToolActions Migration**: Migrated to shadcn Button with variant system
-- [x] **Dialog Enhancement**: Enhanced ConversionGuideDialog with Dialog.Body/Footer
-- [x] **TypeScript Fixes**: Resolved all compilation issues and attribute duplication
-- [x] **HTML Validation**: Fixed self-closing tag warnings and validation errors
-- [x] **Svelte 5 Patterns**: Applied $bindable, $derived, and $props() patterns
-- [x] **Testing**: Verified all migrated components maintain functionality
-- [x] **Documentation**: Updated component migration patterns and guidelines
 
 ### Integration Best Practices
 ```typescript

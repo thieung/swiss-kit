@@ -2,7 +2,9 @@
   import { tools } from '$lib/stores/toolRegistry';
   import { appState, setActiveTool, toggleSidebar } from '$lib/stores/appState.svelte';
   import Logo from '$lib/components/Logo.svelte';
-  import { Search, Home, ChevronLeft, ChevronRight } from 'lucide-svelte';
+  import { Home, ChevronLeft, ChevronRight } from 'lucide-svelte';
+  import { Input } from '$lib/components/ui/input';
+  import SearchIcon from '@lucide/svelte/icons/search';
 
   let searchQuery = $state('');
 
@@ -37,13 +39,15 @@
   <!-- Search -->
   <div class="p-4 border-b border-border {appState.sidebarCollapsed ? 'flex justify-center' : ''}">
     {#if !appState.sidebarCollapsed}
-      <div class="relative w-full">
-        <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-        <input
+      <div class="flex h-9 w-full items-center rounded-md border border-input bg-muted px-3 shadow-xs ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <SearchIcon class="mr-2 h-4 w-4 shrink-0 opacity-50" />
+        <Input
+          id="sidebar-search"
+          name="sidebar-search"
           type="text"
           bind:value={searchQuery}
           placeholder="Search tools..."
-          class="w-full pl-9 pr-4 py-2 bg-muted border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all"
+          class="flex h-full w-full rounded-md border-0 bg-transparent p-0 text-sm shadow-none outline-none focus-visible:ring-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
     {:else}
@@ -52,7 +56,7 @@
         onclick={() => appState.sidebarCollapsed = false}
         aria-label="Expand search bar"
       >
-        <Search size={20} />
+        <SearchIcon size={20} />
       </button>
     {/if}
   </div>

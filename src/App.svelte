@@ -8,6 +8,8 @@
   import { appState, setActiveTool } from '$lib/stores/appState.svelte';
   import type { Tool } from '$lib/types/tool';
   import { ChevronRight } from 'lucide-svelte';
+  import { Button } from "$lib/components/ui/button";
+  import SearchIcon from "@lucide/svelte/icons/search";
 
   const activeTool = $derived(appState.activeTool ? tools.find((t: Tool) => t.id === appState.activeTool) : null);
 
@@ -56,13 +58,18 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button
+        <Button
+          variant="outline"
+          class="relative h-9 w-64 justify-start bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-64"
           onclick={() => appState.commandPaletteOpen = true}
-          class="flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-md text-xs text-muted-foreground hover:border-muted-foreground/50 transition-colors"
         >
-          <span>Search...</span>
-          <kbd class="font-mono bg-muted px-1 rounded border border-border">⌘K</kbd>
-        </button>
+          <SearchIcon class="mr-2 h-4 w-4" />
+          <span class="hidden lg:inline-flex">Search documentation...</span>
+          <span class="inline-flex lg:hidden">Search...</span>
+          <kbd class="pointer-events-none absolute right-1.5 top-[50%] -translate-y-[50%] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+            <span class="text-xs">⌘</span>K
+          </kbd>
+        </Button>
         <ThemeToggle />
       </div>
     </header>
