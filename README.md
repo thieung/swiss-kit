@@ -45,11 +45,11 @@ swisskit/
 ├── src/                      # Svelte frontend
 │   ├── lib/
 │   │   ├── components/      # Shared components
-│   │   ├── stores/          # Svelte stores
+│   │   ├── stores/          # Svelte stores (appState with theme)
 │   │   ├── utils/           # Helper functions
 │   │   └── types/           # TypeScript types
 │   ├── routes/              # SvelteKit routes (if using routing)
-│   ├── app.css              # Global styles + Tailwind
+│   ├── app.css              # Global styles + Tailwind v4 @theme
 │   └── main.ts              # Entry point
 ├── src-tauri/               # Rust backend
 │   ├── src/
@@ -60,9 +60,10 @@ swisskit/
 │   └── tauri.conf.json      # Tauri configuration
 ├── static/                  # Static assets
 ├── package.json
-├── vite.config.ts           # Vite configuration
-├── tailwind.config.js       # Tailwind configuration
+├── vite.config.ts           # Vite configuration + Tailwind v4 plugin
+├── tailwind.config.js       # Minimal config (IDE-only)
 ├── tsconfig.json            # TypeScript configuration
+├── index.html               # FOUC prevention script
 └── README.md
 ```
 
@@ -70,9 +71,19 @@ swisskit/
 
 - **Frontend**: Svelte 5 with TypeScript
 - **Backend**: Rust with Tauri 2.x
-- **Styling**: TailwindCSS
+- **Styling**: Tailwind CSS v4 (CSS-first with Vite plugin)
+- **Fonts**: Self-hosted Geist Variable & Geist Mono Variable
+- **Colors**: OKLCH color space
 - **Build Tool**: Vite
 - **Code Quality**: ESLint, Prettier, TypeScript
+
+## Features
+
+- **Modern UI**: Tailwind CSS v4 with CSS-first configuration
+- **Theme Switching**: Dark/Light/System mode with persistent preferences
+- **Self-hosted Fonts**: Geist Variable font family for optimal performance
+- **OKLCH Colors**: Perceptually uniform color system
+- **FOUC Prevention**: Blocking script for flicker-free theme initialization
 
 ## Window Configuration
 
