@@ -60,11 +60,11 @@
       <div class="flex items-center gap-4">
         <Button
           variant="outline"
-          class="relative h-9 w-64 justify-start bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-64"
+          class="cursor-text relative h-9 w-full justify-start bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-64 lg:w-80"
           onclick={() => appState.commandPaletteOpen = true}
         >
           <SearchIcon class="mr-2 h-4 w-4" />
-          <span class="hidden lg:inline-flex">Search documentation...</span>
+          <span class="hidden lg:inline-flex">Search tools...</span>
           <span class="inline-flex lg:hidden">Search...</span>
           <kbd class="pointer-events-none absolute right-1.5 top-[50%] -translate-y-[50%] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
             <span class="text-xs">⌘</span>K

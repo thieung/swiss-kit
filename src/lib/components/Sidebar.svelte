@@ -39,7 +39,7 @@
   <!-- Search -->
   <div class="p-4 border-b border-border {appState.sidebarCollapsed ? 'flex justify-center' : ''}">
     {#if !appState.sidebarCollapsed}
-      <div class="flex h-9 w-full items-center rounded-md border border-input bg-muted px-3 shadow-xs ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      <label for="sidebar-search" class="cursor-text flex h-9 w-full items-center rounded-md border border-input bg-muted px-3 shadow-xs ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <SearchIcon class="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <Input
           id="sidebar-search"
@@ -49,7 +49,7 @@
           placeholder="Search tools..."
           class="flex h-full w-full rounded-md border-0 bg-transparent p-0 text-sm shadow-none outline-none focus-visible:ring-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
         />
-      </div>
+      </label>
     {:else}
       <button
         class="p-2 hover:bg-accent rounded-lg text-muted-foreground transition-colors"
