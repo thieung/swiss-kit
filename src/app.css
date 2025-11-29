@@ -162,7 +162,20 @@
     @apply bg-muted text-foreground px-2 py-1 rounded text-sm font-mono;
   }
 
-  
+  /* Shiki dual theme support */
+  code[data-theme*=" "],
+  code[data-theme*=" "] span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  .dark code[data-theme*=" "],
+  .dark code[data-theme*=" "] span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+
+
   /* Fix ordered list alignment */
   .prose ol {
     list-style-position: outside;

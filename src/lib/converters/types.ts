@@ -5,5 +5,5 @@ export interface ConversionRule {
 
 export interface Converter {
   name: string;
-  convert: (markdown: string) => string;
+  convert: (markdown: string) => Promise<string> | string;
 }

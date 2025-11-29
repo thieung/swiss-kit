@@ -31,7 +31,7 @@
     }, 300);
   }
 
-  function convertMarkdown() {
+  async function convertMarkdown() {
     if (!input) {
       output = '';
       error = '';
@@ -40,7 +40,7 @@
 
     try {
       const converter = converters[selectedFormat as keyof typeof converters];
-      output = converter.convert(input);
+      output = await converter.convert(input);
       error = '';
     } catch (e) {
       error = `Failed to convert ${selectedFormat}: ${(e as Error).message}`;

@@ -1,12 +1,29 @@
-import { marked } from 'marked';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeStringify from 'rehype-stringify';
 
-// Simple markdown to HTML converter using marked
+// Markdown to HTML converter using unified pipeline with syntax highlighting
 export const markdownToHtml = {
-  convert(input: string): string {
+  async convert(input: string): Promise<string> {
     if (!input) return '';
 
     try {
-      return marked.parse(input) as string;
+      const file = await unified()
+        .use(remarkParse)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypePrettyCode, {
+          theme: {
+            dark: 'github-dark',
+            light: 'github-light',
+          },
+          keepBackground: false,
+        })
+        .use(rehypeStringify, { allowDangerousHtml: true })
+        .process(input);
+
+      return String(file);
     } catch (error) {
       console.error('Error processing markdown:', error);
       return '';
