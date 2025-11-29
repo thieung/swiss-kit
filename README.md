@@ -45,11 +45,11 @@ swisskit/
 ├── src/                      # Svelte frontend
 │   ├── lib/
 │   │   ├── components/      # Shared components
-│   │   ├── stores/          # Svelte stores
+│   │   ├── stores/          # Svelte stores (appState with theme)
 │   │   ├── utils/           # Helper functions
 │   │   └── types/           # TypeScript types
 │   ├── routes/              # SvelteKit routes (if using routing)
-│   ├── app.css              # Global styles + Tailwind
+│   ├── app.css              # Global styles + Tailwind v4 @theme
 │   └── main.ts              # Entry point
 ├── src-tauri/               # Rust backend
 │   ├── src/
@@ -60,19 +60,34 @@ swisskit/
 │   └── tauri.conf.json      # Tauri configuration
 ├── static/                  # Static assets
 ├── package.json
-├── vite.config.ts           # Vite configuration
-├── tailwind.config.js       # Tailwind configuration
+├── vite.config.ts           # Vite configuration + Tailwind v4 plugin
+├── tailwind.config.js       # Minimal config (IDE-only)
 ├── tsconfig.json            # TypeScript configuration
+├── index.html               # FOUC prevention script
 └── README.md
 ```
 
 ## Technology Stack
 
-- **Frontend**: Svelte 5 with TypeScript
+- **Frontend**: Svelte 5 with TypeScript and runes ($state, $derived, $effect)
 - **Backend**: Rust with Tauri 2.x
-- **Styling**: TailwindCSS
-- **Build Tool**: Vite
-- **Code Quality**: ESLint, Prettier, TypeScript
+- **Styling**: Tailwind CSS v4.1.17 (CSS-first with Vite plugin)
+- **Fonts**: Self-hosted Geist Variable & Geist Mono Variable (offline-compatible)
+- **Colors**: OKLCH color space for perceptual uniformity
+- **Build Tool**: Vite with optimized bundling
+- **Code Quality**: ESLint, Prettier, TypeScript strict mode
+- **UI Components**: shadcn-svelte ecosystem with 25+ components
+
+## Features
+
+- **Modern UI**: Tailwind CSS v4 with CSS-first @theme directive configuration
+- **Theme Switching**: Dark/Light/System mode with localStorage persistence and system preference detection
+- **Self-hosted Fonts**: Geist Variable font family for optimal performance and offline compatibility
+- **OKLCH Colors**: Perceptually uniform color system with automatic dark/light mode variants
+- **FOUC Prevention**: Blocking script in index.html for flicker-free theme initialization
+- **Reactive State**: Svelte 5 runes for modern reactive state management
+- **Command Palette**: Keyboard-driven navigation with cmdk-sv integration
+- **Component System**: Full shadcn-svelte ecosystem with accessibility features
 
 ## Window Configuration
 
