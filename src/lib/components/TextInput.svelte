@@ -28,9 +28,9 @@
 </script>
 
 <div class="flex flex-col h-full flex-1 min-h-0">
-  <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100 bg-white">
-    <label for="text-input" class="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</label>
-    <span class="text-xs font-mono text-slate-400">{charCount} chars</span>
+  <div class="flex justify-between items-center px-4 py-3 border-b border-border bg-card">
+    <label for="text-input" class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
+    <span class="text-xs font-mono text-muted-foreground">{charCount} chars</span>
   </div>
   <div class="flex-1 min-h-0">
     <Input

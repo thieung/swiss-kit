@@ -48,7 +48,7 @@
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
-    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-start justify-center pt-[15vh] transition-all duration-200"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-start justify-center pt-[15vh] transition-all duration-200"
     onclick={() => toggleCommandPalette()}
   >
     <div
@@ -61,7 +61,7 @@
           <CommandPrimitive.Input id="command-palette-search" name="command-palette-search" autofocus bind:value={searchQuery} placeholder="Search tools..." class="flex-1 py-4 text-lg text-foreground placeholder:text-muted-foreground outline-none bg-transparent" />
           <div class="text-xs text-muted-foreground font-medium px-2 py-1 rounded bg-muted border border-border ml-2">ESC</div>
         </div>
-        <Command.List class="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+        <Command.List class="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
           <Command.Empty class="py-12 text-center text-muted-foreground">
             <p class="text-sm">No tools found.</p>
           </Command.Empty>

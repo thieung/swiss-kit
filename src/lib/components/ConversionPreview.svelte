@@ -22,10 +22,10 @@
 </script>
 
 <div class="flex flex-col h-full relative group flex-1 min-h-0">
-  <div class="flex justify-between items-center px-4 py-3 border-b border-slate-200 bg-slate-50/80">
-    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">{format} Output</span>
+  <div class="flex justify-between items-center px-4 py-3 border-b border-border bg-muted/80">
+    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{format} Output</span>
     <div class="flex items-center gap-3">
-      <span class="text-xs font-mono text-slate-400">{charCount} chars</span>
+      <span class="text-xs font-mono text-muted-foreground">{charCount} chars</span>
       {#if output}
         <button
           onclick={handleCopy}
@@ -45,14 +45,14 @@
   <div bind:this={element} class="w-full h-full p-4 font-mono text-sm overflow-auto relative bg-transparent" role="region" aria-label={`${format} output preview`}>
     {#if format === 'Preview'}
       <div class="prose prose-sm max-w-none prose-slate prose-headings:font-semibold prose-a:text-indigo-600">
-        {@html output || '<p class="text-slate-400 italic">Preview will appear here...</p>'}
+        {@html output || '<p class="text-muted-foreground italic">Preview will appear here...</p>'}
       </div>
     {:else}
-      <div class="whitespace-pre-wrap text-slate-700 leading-relaxed">
+      <div class="whitespace-pre-wrap text-foreground leading-relaxed">
         {#if output}
           {output}
         {:else}
-          <span class="text-slate-400 italic">Output will appear here...</span>
+          <span class="text-muted-foreground italic">Output will appear here...</span>
         {/if}
       </div>
     {/if}

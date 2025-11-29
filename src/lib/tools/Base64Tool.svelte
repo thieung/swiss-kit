@@ -85,7 +85,7 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-12rem)] min-h-[500px]">
-    <div class="h-full flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/20 transition-shadow duration-200 hover:shadow-md">
+    <div class="h-full flex flex-col bg-background rounded-xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-ring/20 transition-shadow duration-200 hover:shadow-md">
       <TextInput
         bind:value={input}
         onInput={handleInput}
@@ -94,7 +94,7 @@
       />
     </div>
 
-    <div class="h-full flex flex-col bg-slate-50/50 rounded-xl border border-slate-200 shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+    <div class="h-full flex flex-col bg-muted/50 rounded-xl border border-border shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
       {#if error}
         <div class="p-4 bg-red-50 border-b border-red-100 text-red-600 text-sm">
           {error}
