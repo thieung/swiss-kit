@@ -1,6 +1,6 @@
 <script lang="ts">
   import FormatSelector from '$lib/components/FormatSelector.svelte';
-  import MarkdownInput from '$lib/components/MarkdownInput.svelte';
+  import Base64Input from '$lib/components/Base64Input.svelte';
   import ConversionPreview from '$lib/components/ConversionPreview.svelte';
   import ToolActions from '$lib/components/ToolActions.svelte';
   import { markdownToSlack } from '$lib/converters/markdown-to-slack';
@@ -12,6 +12,7 @@
   let input = $state('');
   let selectedFormat = $state('Preview');
   let output = $state('');
+  let error = $state('');
   let copied = $state(false);
 
   const converters = {
@@ -31,8 +32,20 @@
   }
 
   function convertMarkdown() {
-    const converter = converters[selectedFormat as keyof typeof converters];
-    output = converter.convert(input);
+    if (!input) {
+      output = '';
+      error = '';
+      return;
+    }
+
+    try {
+      const converter = converters[selectedFormat as keyof typeof converters];
+      output = converter.convert(input);
+      error = '';
+    } catch (e) {
+      error = `Failed to convert ${selectedFormat}: ${(e as Error).message}`;
+      output = '';
+    }
   }
 
   function handleFormatChange(format: string) {
@@ -51,6 +64,7 @@
   function clearAll() {
     input = '';
     output = '';
+    error = '';
   }
 
   const actions = $derived([
@@ -79,10 +93,20 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-12rem)] min-h-[500px]">
     <div class="h-full flex flex-col bg-background rounded-xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-ring/20 transition-shadow duration-200 hover:shadow-md">
-      <MarkdownInput bind:value={input} onInput={handleInput} />
+      <Base64Input
+        bind:value={input}
+        onInput={handleInput}
+        label="Markdown Input"
+        placeholder="Enter Markdown to convert..."
+      />
     </div>
 
     <div class="h-full flex flex-col bg-muted/50 rounded-xl border border-border shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+      {#if error}
+        <div class="p-4 bg-destructive/10 border-b border-destructive/20 text-destructive text-sm">
+          {error}
+        </div>
+      {/if}
       <ConversionPreview {output} format={selectedFormat} />
     </div>
   </div>

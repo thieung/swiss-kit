@@ -1,6 +1,6 @@
 <script lang="ts">
   import FormatSelector from '$lib/components/FormatSelector.svelte';
-  import TextInput from '$lib/components/TextInput.svelte';
+  import Base64Input from '$lib/components/Base64Input.svelte';
   import ConversionPreview from '$lib/components/ConversionPreview.svelte';
   import ToolActions from '$lib/components/ToolActions.svelte';
   import { Copy, Check } from 'lucide-svelte';
@@ -86,7 +86,7 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-12rem)] min-h-[500px]">
     <div class="h-full flex flex-col bg-background rounded-xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-ring/20 transition-shadow duration-200 hover:shadow-md">
-      <TextInput
+      <Base64Input
         bind:value={input}
         onInput={handleInput}
         label={selectedFormat === 'Encode' ? 'Text Input' : 'Base64 Input'}
@@ -96,7 +96,7 @@
 
     <div class="h-full flex flex-col bg-muted/50 rounded-xl border border-border shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
       {#if error}
-        <div class="p-4 bg-red-50 border-b border-red-100 text-red-600 text-sm">
+        <div class="p-4 bg-destructive/10 border-b border-destructive/20 text-destructive text-sm">
           {error}
         </div>
       {/if}

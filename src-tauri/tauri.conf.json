@@ -32,17 +32,10 @@
         "object-src": "'none'",
         "base-uri": "'self'",
         "form-action": "'none'",
-        "frame-ancestors": "'none'",
-        "upgrade-insecure-requests": []
+        "frame-ancestors": "'none'"
       }
     }
   },
-  "permissions": [
-    "core:default",
-    "dialog:default",
-    "fs:default",
-    "clipboard:default"
-  ],
   "bundle": {
     "active": true,
     "targets": "all",
