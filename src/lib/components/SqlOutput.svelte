@@ -1,8 +1,7 @@
 <script lang="ts">
   import { Copy, Check } from 'lucide-svelte';
   import { copyToClipboard } from '$lib/utils/clipboard';
-  import PrismHighlight from './PrismHighlight.svelte';
-  import 'prismjs/components/prism-sql';
+  import CodeHighlight from './CodeHighlight.svelte';
 
   interface Props {
     value: string;
@@ -37,7 +36,7 @@
     <div class="w-full h-full border border-input rounded-lg overflow-auto bg-card">
       {#if value}
         <div id="sql-output" class="h-full m-0 p-4 text-sm">
-            <PrismHighlight code={value} language="sql" />
+            <CodeHighlight code={value} language="sql" />
         </div>
       {:else}
         <div class="p-4 text-muted-foreground text-sm font-mono">Formatted SQL will appear here...</div>

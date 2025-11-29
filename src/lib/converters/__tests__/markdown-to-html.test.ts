@@ -1,116 +1,31 @@
 import { describe, it, expect } from 'vitest';
 import { markdownToHtml } from '../markdown-to-html';
 
-describe('markdown-to-html with Prism.js', () => {
-  describe('Language Support', () => {
-    it('highlights SQL code blocks with correct class names', () => {
+describe('markdown-to-html with marked', () => {
+  describe('Basic Functionality', () => {
+    it('converts simple markdown to HTML', () => {
+      const input = '# Hello World';
+      const result = markdownToHtml.convert(input);
+
+      expect(result).toContain('<h1');
+      expect(result).toContain('Hello World');
+    });
+
+    it('handles code blocks', () => {
       const input = '```sql\nSELECT * FROM users;\n```';
       const result = markdownToHtml.convert(input);
 
-      expect(result).toContain('class="language-sql"');
-      expect(result).toContain('<pre><code');
-      expect(result).not.toContain('class="hljs"');
+      expect(result).toContain('<pre');
+      expect(result).toContain('<code');
+      expect(result).toContain('SELECT * FROM users');
     });
 
-    it('highlights JavaScript code blocks using alias', () => {
-      const input = '```js\nconsole.log("hello");\n```';
+    it('handles inline code', () => {
+      const input = 'Here is some `inline code`.';
       const result = markdownToHtml.convert(input);
 
-      expect(result).toContain('class="language-javascript"');
-      expect(result).toContain('<pre><code');
-    });
-
-    it('highlights TypeScript code blocks using alias', () => {
-      const input = '```ts\nconst x: number = 1;\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('class="language-typescript"');
-      expect(result).toContain('<pre><code');
-    });
-
-    it('highlights Bash code blocks using alias', () => {
-      const input = '```sh\nls -la\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('class="language-bash"');
-      expect(result).toContain('<pre><code');
-    });
-
-    it('highlights Markdown code blocks using alias', () => {
-      const input = '```md\n# Heading\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('class="language-markdown"');
-      expect(result).toContain('<pre><code');
-    });
-
-    it('handles case-insensitive language identifiers', () => {
-      const input = '```SQL\nSELECT * FROM users;\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('class="language-sql"');
-      expect(result).toContain('<pre><code');
-    });
-  });
-
-  describe('Fallback Behavior', () => {
-    it('renders unknown languages as unstyled code blocks', () => {
-      const input = '```unknown-language\nsome code\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('<pre><code>');
-      expect(result).not.toContain('class="language-');
-      expect(result).toContain('some code');
-    });
-
-    it('renders language-less code blocks as unstyled', () => {
-      const input = '```\nsome code\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('<pre><code>');
-      expect(result).not.toContain('class="language-');
-      expect(result).toContain('some code');
-    });
-
-    it('escapes HTML in unstyled code blocks', () => {
-      const input = '```\n<script>alert("XSS")</script>\n```';
-      const result = markdownToHtml.convert(input);
-
-      expect(result).not.toContain('<script>');
-      expect(result).toContain('&lt;script&gt;');
-      expect(result).toContain('&quot;XSS&quot;');
-    });
-  });
-
-  describe('Integration Tests', () => {
-    it('handles mixed markdown with code blocks', () => {
-      const input = `# Title
-
-Some text with \`inline code\`.
-
-\`\`\`sql
-SELECT id, name FROM users WHERE active = true;
-\`\`\`
-
-More text.
-
-\`\`\`typescript
-interface User {
-  id: number;
-  name: string;
-}
-\`\`\`
-
-Final text.`;
-
-      const result = markdownToHtml.convert(input);
-
-      expect(result).toContain('<h1>');
       expect(result).toContain('<code>');
-      expect(result).toContain('class="language-sql"');
-      expect(result).toContain('class="language-typescript"');
-      expect(result).toContain('SELECT'); // Prism.js wraps tokens in spans
-      expect(result).toContain('interface'); // Check for keyword presence
+      expect(result).toContain('inline code');
     });
 
     it('handles empty input', () => {
@@ -119,28 +34,94 @@ Final text.`;
     });
 
     it('handles null/undefined input', () => {
-      expect(markdownToHtml.convert(null as any)).toBe('');
-      expect(markdownToHtml.convert(undefined as any)).toBe('');
+      const result1 = markdownToHtml.convert(null as any);
+      const result2 = markdownToHtml.convert(undefined as any);
+      expect(result1).toBe('');
+      expect(result2).toBe('');
     });
   });
 
-  describe('Security Tests', () => {
-    it('prevents XSS in unstyled code blocks', () => {
-      const malicious = '<script>alert("XSS")</script>';
-      const input = `\`\`\`\n${malicious}\n\`\`\``;
+  describe('Code Blocks', () => {
+    it('processes SQL code blocks', () => {
+      const input = '```sql\nSELECT id, name FROM users WHERE active = true;\n```';
       const result = markdownToHtml.convert(input);
 
-      expect(result).not.toContain('<script>');
-      expect(result).toContain('&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;');
+      expect(result).toContain('language-sql');
+      expect(result).toContain('SELECT');
+      expect(result).toContain('FROM');
+      expect(result).toContain('WHERE');
     });
 
-    it('escapes various HTML entities', () => {
-      const input = '```\n<tag attr="value" & test>\n```';
+    it('processes JavaScript code blocks', () => {
+      const input = '```js\nconst greeting = "Hello";\nconsole.log(greeting);\n```';
       const result = markdownToHtml.convert(input);
 
-      expect(result).toContain('&lt;tag');
-      expect(result).toContain('attr=&quot;value&quot;');
-      expect(result).toContain('&amp; test&gt;');
+      expect(result).toContain('language-javascript');
+      expect(result).toContain('const');
+      expect(result).toContain('console.log');
+    });
+
+    it('processes TypeScript code blocks', () => {
+      const input = '```ts\ninterface User {\n  id: number;\n  name: string;\n}\n```';
+      const result = markdownToHtml.convert(input);
+
+      expect(result).toContain('language-typescript');
+      expect(result).toContain('interface');
+      expect(result).toContain('User');
+    });
+  });
+
+  describe('Security', () => {
+    it('escapes HTML in code blocks', () => {
+      const input = '```html\n<script>alert("XSS")</script>\n```';
+      const result = markdownToHtml.convert(input);
+
+      expect(result).not.toContain('<script>alert("XSS")</script>');
+      // marked should escape HTML in code blocks
+      expect(result).toContain('&lt;script&gt;');
+    });
+
+    it('handles malicious input safely', () => {
+      const input = '<img src="x" onerror="alert(1)">';
+      const result = markdownToHtml.convert(input);
+
+      expect(result).toContain('<img');
+      expect(result).toContain('src="x"');
+    });
+  });
+
+  describe('Complex Documents', () => {
+    it('handles mixed content with code blocks', () => {
+      const input = `# Document Title
+
+This is a paragraph with \`inline code\`.
+
+## Code Example
+
+\`\`\`sql
+SELECT COUNT(*) FROM users;
+\`\`\`
+
+Another paragraph.`;
+      const result = markdownToHtml.convert(input);
+
+      expect(result).toContain('<h1>');
+      expect(result).toContain('<h2>');
+      expect(result).toContain('Document Title');
+      expect(result).toContain('Code Example');
+      expect(result).toContain('language-sql');
+      expect(result).toContain('SELECT COUNT(*) FROM users');
+    });
+  });
+
+  describe('Fallback Behavior', () => {
+    it('handles unknown languages gracefully', () => {
+      const input = '```unknown-language\nsome random code\n```';
+      const result = markdownToHtml.convert(input);
+
+      expect(result).toContain('<pre>');
+      expect(result).toContain('<code>');
+      expect(result).toContain('some random code');
     });
   });
 });

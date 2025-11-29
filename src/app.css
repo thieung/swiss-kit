@@ -1,6 +1,5 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
-@import "prism-themes/themes/prism-one-dark.css";
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -138,13 +137,32 @@
     padding: 0;
   }
 
-  /* Inline code styling */
-  .prose :not(pre) > code {
-    border-radius: 0.25rem;
-    padding: 0.125rem 0.375rem;
-    font-size: 0.875em;
+  /* rehype-pretty-code styles */
+  pre {
+    @apply bg-muted border border-border rounded-lg p-4 overflow-x-auto;
   }
 
+  /* Line highlighting */
+  [data-highlighted-line] {
+    @apply bg-primary/10 border-l-2 border-primary;
+  }
+
+  /* Line numbers */
+  [data-line-numbers] {
+    @apply text-muted-foreground text-sm select-none;
+  }
+
+  /* Code tokens with Shiki highlighting */
+  pre code {
+    @apply text-sm;
+  }
+
+  /* Inline code styling for rehype-pretty-code */
+  :not(pre) > code {
+    @apply bg-muted text-foreground px-2 py-1 rounded text-sm font-mono;
+  }
+
+  
   /* Fix ordered list alignment */
   .prose ol {
     list-style-position: outside;
